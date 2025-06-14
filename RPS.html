@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <title>Rock Paper Scissor!</title>
+  <link rel="icon" href="Favicons/icons8-game-maker-48.png">
+  <style>
+    body {
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: hsl(0, 0%, 12%);
+    }
+    header, footer {
+      background-color: #0A1128;
+      text-align: center;
+      color: #FFFFFF;
+      padding: 20px;
+    }
+    .container {
+      display: inline-block;
+      margin: 40px;
+    }
+    button {
+      font-size: 30px;
+      border-radius: 13px;
+      background-color: #0A1128;
+      color: #FFFFFF;
+      padding: 8px;
+      border: 3px solid #FFFFFF;
+      margin: 30px;
+      cursor: pointer;
+    }
+    img {
+      display: block;
+      border-radius: 100px;
+      width: 250px;
+    }
+    #result {
+      color: #00FF00;
+      font-size: 24px;
+      margin-top: 30px;
+    }
+    #score {
+      color: #FFFFFF;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ROCK PAPER SCISSOR GAME</h1>
+  </header>
+
+  <h2 style="color: #FFD700; text-align: left; padding: 10px; margin: 0%;">Rock Paper Scissors!</h2>
+  <p style="color: #D3D3D3; text-align: left; padding-left: 10px; margin: 0%;">
+    A classic game! Choose one and see if you can beat the computer.<br>
+    First to win 2 rounds wins the match.
+  </p>
+
+  <h1 style="color: #D3D3D3">CHOOSE</h1>
+
+  <div class="container">
+    <img src="images/r.png" alt="rock">
+    <button id="rockBtn">ROCK</button>
+  </div>
+
+  <div class="container">
+    <img src="images/p.png" alt="paper">
+    <button id="paperBtn">PAPER</button>
+  </div>
+
+  <div class="container">
+    <img src="images/s.png" alt="scissor">
+    <button id="scissorBtn">SCISSOR</button>
+  </div>
+
+  <h2 id="result">Let's play!</h2>
+  <h3 id="score">You: 0 | Computer: 0</h3>
+
+  <footer>
+    <ul>
+      <li style="display: inline; padding: 30px;">&copy;2024 abdulrehmannl</li>
+      <li style="display: inline; padding: 30px;">Help & Support</li>
+      <li style="display: inline; padding: 30px;">Contact Us</li>
+      <li style="display: inline; padding: 30px;">Terms</li>
+    </ul>
+  </footer>
+
+  <!-- Load the C++ WebAssembly module -->
+  <script src="game.js"></script>
+  <script>
+    let play;
+
+    function updateResult(msg) {
+      const [status, score, match] = msg.split(" | ");
+      document.getElementById("result").innerText = status;
+      document.getElementById("score").innerText = score;
+
+      if (match) {
+        setTimeout(() => {
+          alert(match);
+          document.getElementById("result").innerText = "Let's play!";
+          document.getElementById("score").innerText = "You: 0 | Computer: 0";
+        }, 500);
+      }
+    }
+
+    Module.onRuntimeInitialized = () => {
+      play = Module.cwrap('play', 'string', ['number']);
+
+      document.getElementById('rockBtn').onclick = () => updateResult(play(0));
+      document.getElementById('paperBtn').onclick = () => updateResult(play(1));
+      document.getElementById('scissorBtn').onclick = () => updateResult(play(2));
+    };
+  </script>
+</body>
+</html>
+ 
