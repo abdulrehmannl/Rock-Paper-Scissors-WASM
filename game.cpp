@@ -1,47 +1,72 @@
-#include <string>
-#include <cstdlib>
-#include <ctime>
+#include<iostream>
+#include<cstdlib>
+#include<ctime>
 
-extern "C" {
+using namespace std;
 
-int userScore = 0;
-int computerScore = 0;
-
-const char* moveToString(int move) {
-    switch (move) {
-        case 0: return "Rock";
-        case 1: return "Paper";
-        case 2: return "Scissors";
-        default: return "Invalid";
-    }
+char getComputerChoice() {
+    char choices[3] = {'s', 'p', 'z'};
+    return choices[rand() % 3];
 }
 
-const char* play(int userMove) {
-    static std::string result;
-    std::srand(std::time(0));
-    int compMove = std::rand() % 3;
-
-    if (userMove == compMove) {
-        result = "Draw (" + std::string(moveToString(userMove)) + ")";
-    } else if ((userMove == 0 && compMove == 2) ||
-               (userMove == 1 && compMove == 0) ||
-               (userMove == 2 && compMove == 1)) {
-        userScore++;
-        result = "Win (" + std::string(moveToString(userMove)) + " vs " + moveToString(compMove) + ")";
+string determineWinner(char user, char computer) {
+    if (user == computer) {
+        return "It's a tie!";
+    } else if ((user == 's' && computer == 'z') ||
+               (user == 'p' && computer == 's') ||
+               (user == 'z' && computer == 'p')) {
+        return "You win!";
     } else {
-        computerScore++;
-        result = "Lose (" + std::string(moveToString(userMove)) + " vs " + moveToString(compMove) + ")";
+        return "Computer wins!";
     }
-
-    result += " | Score: " + std::to_string(userScore) + "-" + std::to_string(computerScore);
-
-    if (userScore == 2 || computerScore == 2) {
-        result += userScore > computerScore ? " | 🏆 You win Best of 3!" : " | 💻 Computer wins Best of 3!";
-        userScore = 0;
-        computerScore = 0;
-    }
-
-    return result.c_str();
 }
 
+int main() {
+    // Seed the random number generator
+    srand(static_cast<unsigned>(time(0)));
+
+    cout << "Choose s for stone" << endl;
+    cout << "Choose p for paper" << endl;
+    cout << "Choose z for scissors" << endl;
+
+    int userWins = 0;
+    int computerWins = 0;
+
+    for (int i = 0; i < 3; ++i) {
+        char userChoice;
+        cout << "Round " << (i + 1) << ": ";
+        cin >> userChoice;
+
+        // Validate user input
+        if (userChoice != 's' && userChoice != 'p' && userChoice != 'z') {
+            cout << "Invalid input. Please choose 's', 'p', or 'z'." << endl;
+            --i; // Do not count this round
+            continue;
+        }
+
+        char computerChoice = getComputerChoice();
+
+        cout << "You chose: " << userChoice << endl;
+        cout << "Computer chose: " << computerChoice << endl;
+
+        string result = determineWinner(userChoice, computerChoice);
+        cout << result << endl;
+
+        if (result == "🏆 You win!") {
+            userWins++;
+        } else if (result == "💻 Computer wins!") {
+            computerWins++;
+        }
+    }
+
+    cout << "Final Result:" << endl;
+    if (userWins > computerWins) {
+        cout << "You are the winner!" << endl;
+    } else if (computerWins > userWins) {
+        cout << "Computer is the winner!" << endl;
+    } else {
+        cout << "It's a tie overall!" << endl;
+    }
+
+    return 0;
 }
